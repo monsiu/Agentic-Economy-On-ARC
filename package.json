@@ -1,13 +1,14 @@
 {
   "name": "hello-arc",
   "version": "1.0.0",
-  "description": "**Foundry is a blazing fast, portable and modular toolkit for Ethereum application development written in Rust.**",
-  "main": "index.js",
+  "description": "NanoPay - AI Nanopayment API on Arc blockchain",
+  "main": "server/index.js",
   "directories": {
     "lib": "lib",
     "test": "test"
   },
   "scripts": {
+    "start": "node server/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
