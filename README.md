@@ -1,4 +1,4 @@
-# ArcPay - AI-Powered Nanopayment API on Arc
+# NanoPay ARC - AI-Powered Nanopayment API on Arc
 
 ## What We Built
 A per-request AI API where every query costs $0.001 USDC, settled instantly on Arc blockchain. A Gemini 2.0 Flash agent answers questions — but only after payment is verified onchain.
