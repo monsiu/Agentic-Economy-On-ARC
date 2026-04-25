@@ -14,6 +14,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^10.3.0",
     "@google/generative-ai": "^0.24.1",
     "axios": "^1.15.2",
     "dotenv": "^17.4.2",
