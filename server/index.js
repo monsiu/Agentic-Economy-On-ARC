@@ -76,9 +76,18 @@ app.get('/ask', verifyPayment, async (req, res) => {
 app.get('/demo-ask', async (req, res) => {
   const question = req.query.q || 'What is the agentic economy?';
   try {
+    const contractWithSigner = new ethers.Contract(
+      process.env.NANO_PAYMENT_CONTRACT,
+      CONTRACT_ABI,
+      wallet
+    );
+    const tx = await contractWithSigner.pay('/demo-ask', { gasLimit: 200000 });
+    const receipt = await tx.wait();
     const answer = await askGemini(question);
     res.json({
       answer,
+      txHash: receipt.hash,
+      payer: wallet.address,
       model: 'gemini-2.0-flash',
       cost: '$0.001 USDC',
       timestamp: new Date().toISOString()
