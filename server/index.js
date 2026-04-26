@@ -2,8 +2,11 @@ require('dotenv').config();
 const express = require('express');
 const { ethers } = require('ethers');
 const { askGemini } = require('./agent');
+const path = require('path');
+
 const app = express();
 app.use(express.json());
+app.use(express.static(path.join(__dirname, '../public')));
 
 const provider = new ethers.JsonRpcProvider(process.env.ARC_TESTNET_RPC_URL);
 const wallet = new ethers.Wallet(process.env.PRIVATE_KEY, provider);
@@ -20,7 +23,6 @@ const contract = new ethers.Contract(
   provider
 );
 
-// Middleware to verify payment
 async function verifyPayment(req, res, next) {
   const txHash = req.headers['x-payment-tx'];
   if (!txHash) {
@@ -30,7 +32,6 @@ async function verifyPayment(req, res, next) {
       price: '$0.001 USDC per request'
     });
   }
-
   try {
     const receipt = await provider.getTransactionReceipt(txHash);
     if (!receipt || receipt.status !== 1) {
@@ -43,7 +44,6 @@ async function verifyPayment(req, res, next) {
   }
 }
 
-// Free endpoint - stats only
 app.get('/stats', async (req, res) => {
   try {
     const [calls, revenue, price] = await contract.getStats();
@@ -57,7 +57,6 @@ app.get('/stats', async (req, res) => {
   }
 });
 
-// Paid endpoint - AI response
 app.get('/ask', verifyPayment, async (req, res) => {
   const question = req.query.q || 'What is the Agentic Economy?';
   try {
@@ -68,6 +67,21 @@ app.get('/ask', verifyPayment, async (req, res) => {
       timestamp: new Date().toISOString(),
       model: 'gemini-2.0-flash',
       cost: '$0.001 USDC'
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+app.get('/demo-ask', async (req, res) => {
+  const question = req.query.q || 'What is the agentic economy?';
+  try {
+    const answer = await askGemini(question);
+    res.json({
+      answer,
+      model: 'gemini-2.0-flash',
+      cost: '$0.001 USDC',
+      timestamp: new Date().toISOString()
     });
   } catch (err) {
     res.status(500).json({ error: err.message });
